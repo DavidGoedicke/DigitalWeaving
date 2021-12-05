@@ -18,9 +18,12 @@ for(int i =0; i<FBCount;i++){
   ofDrawRectangle(1,1,FboWidth-1,FboHeight-1);
   ofDrawBitmapString(i,FboWidth/2,FboHeight/2);
   temp.end();
-FrameBuffers.push_back(temp);
+  FrameBuffers.push_back(temp);
 
-}
+
+
+
+  }
 //
 // fboA.allocate(100,100, GL_RGB);
 // fboA.begin();
@@ -33,10 +36,28 @@ FrameBuffers.push_back(temp);
 ///720.0
 
 scrollDelta=0;
+
+receiver.setup(PORT);
 }
 
 //--------------------------------------------100------------------
 void ofApp::update(){
+
+  while(receiver.hasWaitingMessages()){
+    ofxOscMessage m;
+    receiver.getNextMessage(m);
+
+    		// check for mouse moved message
+    		if(m.getAddress() == "/pattern"){
+
+          int param[8] ;//{ofRandom(100), 2, 3, 17, 50};
+          for(int i=0;i<8;i++){
+            param[i]=  m.getArgAsInt32(i);
+          }
+          MakeNextSection(param);
+
+        }
+      }
 
 }
 
@@ -91,6 +112,11 @@ drawNextRow(yPos+=RowDif,true, ofColor(0, 0,0));
   drawNextRow(yPos+=RowDif,false, ofColor(0, 0,0));
   cout<<yPos<<FboHeight<<endl;
 FrameBuffers[ActiveFBO].end();
+
+ofPixels pixels;
+FrameBuffers[ActiveFBO].readToPixels(pixels);
+	ofSaveImage(pixels,OutPutPath+ofGetTimestampString()+".jpg");
+
 
 }
 

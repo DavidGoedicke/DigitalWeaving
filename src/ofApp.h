@@ -1,6 +1,13 @@
 #pragma once
 
+
+
 #include "ofMain.h"
+#include "ofxOsc.h"
+
+
+#define PORT 12345
+
 
 class ofApp : public ofBaseApp{
 	public:
@@ -29,8 +36,9 @@ std::vector<ofFbo> FrameBuffers;
  int FboWidth;
  int FboHeight;
 const int RowHeight=20;
-
 const int TargetScreenHeight=720;
+
+const string OutPutPath= "./output/";
 int FBCount;
 
 
@@ -38,5 +46,10 @@ int ActiveFBO;
 
 const int ScrollSpeed=1;
  unsigned int scrollDelta;
+
+
+ ofxOscReceiver receiver;
+
+ ofImage BackgroundImage;
 
 };
