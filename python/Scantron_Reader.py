@@ -1,0 +1,244 @@
+# from imutils.perspective import four_point_transform
+# from imutils import contours
+import numpy as np
+import argparse
+#import imutils
+import cv2
+import matplotlib as plt
+from matplotlib import pyplot as plt
+from pathlib import Path
+import argparse
+
+num_choices = 4
+num_questions = 8
+img_dir = "./test_Scantron/" 
+img_index = 0
+webCam = False 
+
+def load_image():
+    #read image on disk to buffer 
+    # Input Structure
+    img_file_name = []
+
+    entries = Path(img_dir)
+    for entry in entries.iterdir():
+        img_file_name.append(entry.name)
+        #print(entry.name)
+    
+    image = cv2.imread(img_dir + img_file_name[img_index])
+    print(img_file_name[img_index])
+
+    # gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    # blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+    # edged = cv2.Canny(blurred, 75, 200)
+    # thresh = cv2.threshold(edged, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
+
+    print("Load in image at index: " + str(img_index))
+
+    return image 
+
+
+def pre_processing(image): 
+    # grayscale, blur, edge detection
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+    edged = cv2.Canny(blurred, 75, 200)
+    thresh = cv2.threshold(edged, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
+
+    return edged, thresh
+
+
+def find_contours(edged): 
+    # find contours in the edge map, then initialize
+    # the contour that corresponds to the document
+    im2, contours, hierarchy = cv2.findContours(edged.copy(), cv2.RETR_EXTERNAL,
+        cv2.CHAIN_APPROX_SIMPLE)
+
+    #print(len(contours))
+
+    cnt = contours
+    #cv2.drawContours(image, cnt, 3, (0,255,0), 3)
+
+    circle_x = []
+    circle_y = []
+    questionCnts = []
+
+    for c in contours:
+
+        #---- making sure to avoid small unwanted contours ---
+        if cv2.contourArea(c) > 200:
+            epsilon = 0.2 * cv2.arcLength(c, True)
+            approximations = cv2.approxPolyDP(c, epsilon, True)
+            
+            #--- selecting contours having more than 2 sides ---
+            if  7 < len(approximations) < 9:
+                (x, y, w, h) = cv2.boundingRect(c)
+                ar = w / float(h)
+                
+                # in order to label the contour as a question, region
+                # should be sufficiently wide, sufficiently tall, and
+                # have an aspect ratio approximately equal to 1
+                if w >= 20 and h >= 20 and ar >= 0.9 and ar <= 1.1:
+                    questionCnts.append(c)
+                
+                    #(x,y),radius = cv2.minEnclosingCircle(c)
+                    #x, y, w, h = cv2.boundingRect(c)
+                    #print(x, y)
+                
+                circle_x.append(x)
+                circle_y.append(y)
+    return questionCnts     
+
+
+
+def sort_contours(cnts, method):
+    # initialize the reverse flag and sort index
+    reverse = False
+    i = 0
+    # handle if we need to sort in reverse
+    if method == "right-to-left" or method == "bottom-to-top":
+        reverse = True
+    # handle if we are sorting against the y-coordinate rather than
+    # the x-coordinate of the bounding box
+    if method == "top-to-bottom" or method == "bottom-to-top":
+        i = 1
+    # construct the list of bounding boxes and sort them from top to
+    # bottom
+    boundingBoxes = [cv2.boundingRect(c) for c in cnts]
+    (cnts, boundingBoxes) = zip(*sorted(zip(cnts, boundingBoxes),
+        key=lambda b:b[1][i], reverse=reverse))
+    # return the list of sorted contours and bounding boxes
+    return (cnts, boundingBoxes)
+
+
+
+def find_bubbled(questionCnts, thresh): 
+    # Output Structure
+    circled_answer = []
+
+
+    # Sort circles from top to down
+    if len(questionCnts) > 0: 
+        questionCnts = sort_contours(questionCnts, "top-to-bottom")[0]
+
+        # Go through each line of circles, sort from left to right, then find the shaded
+        # one. 
+        for (q, i) in enumerate(np.arange(0, len(questionCnts), num_choices)):
+            # sort the contours for the current question from
+            # left to right, then initialize the index of the
+            # bubbled answer
+            cnts = sort_contours(questionCnts[i:i + num_choices], "left-to-right")[0]
+            #print(cnts_tmp)
+            bubbled = None
+            #     cv2.drawContours(image3, cnts, -1, 255, -1)
+            #     plt.imshow(image3)
+
+            # loop over the sorted contours
+            for (j, c) in enumerate(cnts):
+                # construct a mask that reveals only the current
+                # "bubble" for the question
+                #print("j: " + str(j))
+                mask = np.zeros(thresh.shape, dtype="uint8")
+                cv2.drawContours(mask, [c], -1, 255, -1)
+            
+                # apply the mask to the thresholded image, then
+                # count the number of non-zero pixels in the
+                # bubble area
+                mask = cv2.bitwise_and(thresh, thresh, mask=mask)
+                total = cv2.countNonZero(mask)
+                #print(total)
+                
+                # if the current total has a larger number of total
+                # non-zero pixels, then we are examining the currently
+                # bubbled-in answer
+                if bubbled is None or total < bubbled[0]:
+        #             print("updated bubbled")
+        #             print(total)
+        #             print(j)
+                    
+                    bubbled = (total, j)
+                    #print(len(bubbled))
+        
+            #print(bubbled)
+            circled_answer.append(bubbled[1])
+
+    return circled_answer
+    # cv2.drawContours(image3, [cnts[bubbled[1]]], -1, (255, 0, 0), 3)
+    # plt.imshow(image3)
+
+def process_frame(frame):
+    image_edged, image_thresh = pre_processing(frame) 
+    question_contours = find_contours(image_edged)
+    response = find_bubbled(question_contours, image_thresh)
+    return response
+
+# Keyboard Interrupt Handler
+def _keyboardInterrupt_handler(signum, frame):
+    print("  key board interrupt received...")
+
+    try:
+        sys.exit(0)
+    except SystemExit:
+        os._exit(0)
+
+
+if __name__ == "__main__":
+
+    #------Load Image from disk or webcam-------#
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        'img_index', type=int, help='the image index', nargs="?", default = 0)
+    parser.add_argument(
+        "-t", "--test", action="store_true", help="use disk image")
+    args = parser.parse_args()
+
+    #-----In Test mode. Use disk image based on image index. ------#
+    if args.test:
+        print("Test mode. Using image on disk.")
+        img_index = args.img_index
+        
+        #------Process Image-------#
+        image = load_image()
+        image_edged, image_thresh = pre_processing(image)
+        #image_edged, image_thresh = load_image()
+        question_contours = find_contours(image_edged)
+        response = find_bubbled(question_contours, image_thresh)
+
+        print("Responses read in are: ")
+        print(response)
+
+    else: 
+        # Or use webcame 
+        try:
+            print("Trying to open the Webcam.")
+            cap = cv2.VideoCapture(0)
+            if cap is None or not cap.isOpened():
+               raise("No camera")
+            webCam = True 
+        except:
+            img_index = 0
+            print("Using default image.")
+
+
+        while(True):
+            if webCam:
+                ret, img = cap.read()
+                response = process_frame(img)
+
+                display = "no detection"
+                if len(response) > 0: 
+                    display = ''.join(response)
+
+                cv2.imshow(display, img)
+
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    cap.release()
+                    break
+            else:
+                break
+
+        cv2.destroyAllWindows()
+
+
+
+
