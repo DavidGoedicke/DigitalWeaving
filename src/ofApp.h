@@ -23,22 +23,20 @@ class ofApp : public ofBaseApp{
 		void MakeNextSection(int param[8]);
 	void	drawNextRow(int yPos,bool indentedLine,ofColor col);
 
-ofFbo* NextActive;
-
 std::vector<ofFbo> FrameBuffers;
 
-ofFbo fboA;
-ofFbo fboB;
+
  int FboWidth;
  int FboHeight;
 const int RowHeight=20;
 
-
+const int TargetScreenHeight=720;
 int FBCount;
 
 
-const int ScrollSpeed=2;
- unsigned long scrollDistance;
+int ActiveFBO;
+
+const int ScrollSpeed=1;
  unsigned int scrollDelta;
 
 };
