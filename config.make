@@ -8,8 +8,7 @@
 #   The location of your root openFrameworks installation
 #       (default) OF_ROOT = ../../.. 
 ################################################################################
-OF_ROOT = /home/dg/of_v0.11.2_linux64gcc6_release
-
+OF_ROOT = /home/pi/of/of_v0.11.2_linuxarmv6l_release
 ################################################################################
 # PROJECT ROOT
 #   The location of the project - a starting place for searching for files
