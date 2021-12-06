@@ -51,5 +51,5 @@ const int ScrollSpeed=2;
  ofxOscReceiver receiver;
 
  ofImage BackgroundImage;
-
+bool KeyPressed;
 };

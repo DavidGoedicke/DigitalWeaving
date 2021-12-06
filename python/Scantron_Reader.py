@@ -11,12 +11,12 @@ import argparse
 
 num_choices = 4
 num_questions = 8
-img_dir = "./test_Scantron/" 
+img_dir = "./test_Scantron/"
 img_index = 0
-webCam = False 
+webCam = False
 
 def load_image():
-    #read image on disk to buffer 
+    #read image on disk to buffer
     # Input Structure
     img_file_name = []
 
@@ -24,7 +24,7 @@ def load_image():
     for entry in entries.iterdir():
         img_file_name.append(entry.name)
         #print(entry.name)
-    
+
     image = cv2.imread(img_dir + img_file_name[img_index])
     print(img_file_name[img_index])
 
@@ -35,10 +35,10 @@ def load_image():
 
     print("Load in image at index: " + str(img_index))
 
-    return image 
+    return image
 
 
-def pre_processing(image): 
+def pre_processing(image):
     # grayscale, blur, edge detection
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     blurred = cv2.GaussianBlur(gray, (5, 5), 0)
@@ -48,12 +48,12 @@ def pre_processing(image):
     return edged, thresh
 
 
-def find_contours(edged): 
+def find_contours(edged):
     # find contours in the edge map, then initialize
     # the contour that corresponds to the document
-    im2, contours, hierarchy = cv2.findContours(edged.copy(), cv2.RETR_EXTERNAL,
+    contours, hierarchy = cv2.findContours(edged.copy(), cv2.RETR_EXTERNAL,
         cv2.CHAIN_APPROX_SIMPLE)
-
+    #Changes based on https://stackoverflow.com/questions/53906178/how-opencv-4-x-api-is-different-from-previous-version
     #print(len(contours))
 
     cnt = contours
@@ -69,25 +69,25 @@ def find_contours(edged):
         if cv2.contourArea(c) > 200:
             epsilon = 0.2 * cv2.arcLength(c, True)
             approximations = cv2.approxPolyDP(c, epsilon, True)
-            
+
             #--- selecting contours having more than 2 sides ---
             if  7 < len(approximations) < 9:
                 (x, y, w, h) = cv2.boundingRect(c)
                 ar = w / float(h)
-                
+
                 # in order to label the contour as a question, region
                 # should be sufficiently wide, sufficiently tall, and
                 # have an aspect ratio approximately equal to 1
                 if w >= 20 and h >= 20 and ar >= 0.9 and ar <= 1.1:
                     questionCnts.append(c)
-                
+
                     #(x,y),radius = cv2.minEnclosingCircle(c)
                     #x, y, w, h = cv2.boundingRect(c)
                     #print(x, y)
-                
+
                 circle_x.append(x)
                 circle_y.append(y)
-    return questionCnts     
+    return questionCnts
 
 
 
@@ -112,17 +112,17 @@ def sort_contours(cnts, method):
 
 
 
-def find_bubbled(questionCnts, thresh): 
+def find_bubbled(questionCnts, thresh):
     # Output Structure
     circled_answer = []
 
 
     # Sort circles from top to down
-    if len(questionCnts) > 0: 
+    if len(questionCnts) > 0:
         questionCnts = sort_contours(questionCnts, "top-to-bottom")[0]
 
         # Go through each line of circles, sort from left to right, then find the shaded
-        # one. 
+        # one.
         for (q, i) in enumerate(np.arange(0, len(questionCnts), num_choices)):
             # sort the contours for the current question from
             # left to right, then initialize the index of the
@@ -140,14 +140,14 @@ def find_bubbled(questionCnts, thresh):
                 #print("j: " + str(j))
                 mask = np.zeros(thresh.shape, dtype="uint8")
                 cv2.drawContours(mask, [c], -1, 255, -1)
-            
+
                 # apply the mask to the thresholded image, then
                 # count the number of non-zero pixels in the
                 # bubble area
                 mask = cv2.bitwise_and(thresh, thresh, mask=mask)
                 total = cv2.countNonZero(mask)
                 #print(total)
-                
+
                 # if the current total has a larger number of total
                 # non-zero pixels, then we are examining the currently
                 # bubbled-in answer
@@ -155,10 +155,10 @@ def find_bubbled(questionCnts, thresh):
         #             print("updated bubbled")
         #             print(total)
         #             print(j)
-                    
+
                     bubbled = (total, j)
                     #print(len(bubbled))
-        
+
             #print(bubbled)
             circled_answer.append(bubbled[1])
 
@@ -167,7 +167,7 @@ def find_bubbled(questionCnts, thresh):
     # plt.imshow(image3)
 
 def process_frame(frame):
-    image_edged, image_thresh = pre_processing(frame) 
+    image_edged, image_thresh = pre_processing(frame)
     question_contours = find_contours(image_edged)
     response = find_bubbled(question_contours, image_thresh)
     return response
@@ -196,7 +196,7 @@ if __name__ == "__main__":
     if args.test:
         print("Test mode. Using image on disk.")
         img_index = args.img_index
-        
+
         #------Process Image-------#
         image = load_image()
         image_edged, image_thresh = pre_processing(image)
@@ -207,14 +207,14 @@ if __name__ == "__main__":
         print("Responses read in are: ")
         print(response)
 
-    else: 
-        # Or use webcame 
+    else:
+        # Or use webcame
         try:
             print("Trying to open the Webcam.")
             cap = cv2.VideoCapture(0)
             if cap is None or not cap.isOpened():
                raise("No camera")
-            webCam = True 
+            webCam = True
         except:
             img_index = 0
             print("Using default image.")
@@ -226,7 +226,7 @@ if __name__ == "__main__":
                 response = process_frame(img)
 
                 display = "no detection"
-                if len(response) > 0: 
+                if len(response) > 0:
                     display = ''.join(response)
 
                 cv2.imshow(display, img)
@@ -238,7 +238,3 @@ if __name__ == "__main__":
                 break
 
         cv2.destroyAllWindows()
-
-
-
-

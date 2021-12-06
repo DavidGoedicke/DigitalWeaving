@@ -5,7 +5,7 @@ void ofApp::setup(){
 FboWidth=ofGetWidth();
 FboHeight = (RowHeight*20);
 
- FBCount =  (int)  ((ceil((float)TargetScreenHeight/(float)FboHeight))+2);
+ FBCount =  (int)  ((ceil((float)TargetScreenHeight/(float)FboHeight))+3);
 ActiveFBO=0;
 cout<<"I am gonna need this many framebuffers: "<<FBCount<<endl;
 for(int i =0; i<FBCount;i++){
@@ -47,7 +47,6 @@ void ofApp::update(){
     ofxOscMessage m;
     receiver.getNextMessage(m);
 
-    		// check for mouse moved message
     		if(m.getAddress() == "/pattern"){
 
           int param[8] ;//{ofRandom(100), 2, 3, 17, 50};
@@ -64,7 +63,10 @@ void ofApp::update(){
 
 void ofApp::MakeNextSection(int param[8]){
 
-
+if(scrollDelta>FboHeight){
+  ofLog()<<"Discarding Input too much in the queue"<<endl;
+  return;
+}
 ActiveFBO--;
 if(ActiveFBO<0){
   ActiveFBO=FBCount-1;
@@ -110,13 +112,17 @@ switch(param[i]){
 //cout<<"Step B"<<endl;;
 drawNextRow(yPos+=RowDif,true, ofColor(0, 0,0));
   drawNextRow(yPos+=RowDif,false, ofColor(0, 0,0));
-  cout<<yPos<<FboHeight<<endl;
+
 FrameBuffers[ActiveFBO].end();
 
-ofPixels pixels;
-FrameBuffers[ActiveFBO].readToPixels(pixels);
-	ofSaveImage(pixels,OutPutPath+ofGetTimestampString()+".jpg");
-
+if(!  KeyPressed){
+    ofPixels pixels;
+    FrameBuffers[ActiveFBO].readToPixels(pixels);
+	 ofSaveImage(pixels,OutPutPath+ofGetTimestampString()+".png");
+  }
+  else{
+    KeyPressed=false;
+  }
 
 }
 
@@ -154,8 +160,12 @@ void ofApp::draw(){
 //preparation
 
   if(scrollDelta>0){
-    if(ofGetFrameNum()%(RowHeight*2)>=RowHeight){
+    if(ofGetFrameNum()%(RowHeight*2)>=RowHeight && scrollDelta<=FboHeight){
+
       scrollDelta-=ScrollSpeed;
+    }else if(scrollDelta>FboHeight){
+
+        scrollDelta-=ScrollSpeed;
     }
   }
   if(scrollDelta<0){
@@ -211,8 +221,9 @@ void ofApp::keyReleased(int key){
   for(int i=0;i<8;i++){
     param[i]=((int)ofRandom(100))%4;
   }
+    KeyPressed=true;
   MakeNextSection(param);
-  cout<<"GotOneKeyPress"<<endl;
+
 }
 
 //--------------------------------------------------------------
