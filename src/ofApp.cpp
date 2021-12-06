@@ -69,7 +69,7 @@ ActiveFBO--;
 if(ActiveFBO<0){
   ActiveFBO=FBCount-1;
 }
-scrollDelta=FboHeight;
+scrollDelta+=FboHeight;
 int yPos= 0;
 int RowDif = RowHeight;
 
@@ -154,7 +154,12 @@ void ofApp::draw(){
 //preparation
 
   if(scrollDelta>0){
-    scrollDelta-=ScrollSpeed;
+    if(ofGetFrameNum()%(RowHeight*2)>=RowHeight){
+      scrollDelta-=ScrollSpeed;
+    }
+  }
+  if(scrollDelta<0){
+    scrollDelta=0;
   }
 
 int height=ofGetHeight();

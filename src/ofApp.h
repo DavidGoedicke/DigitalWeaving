@@ -44,7 +44,7 @@ int FBCount;
 
 int ActiveFBO;
 
-const int ScrollSpeed=1;
+const int ScrollSpeed=2;
  unsigned int scrollDelta;
 
 
