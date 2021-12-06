@@ -587,7 +587,23 @@ obj/linuxarmv6l/Release/src/main.o: \
  /home/pi/of/of_v0.11.2_linuxarmv6l_release/libs/openFrameworks/3d/of3dUtils.h \
  /home/pi/of/of_v0.11.2_linuxarmv6l_release/libs/openFrameworks/3d/ofCamera.h \
  /home/pi/of/of_v0.11.2_linuxarmv6l_release/libs/openFrameworks/3d/ofEasyCam.h \
- /home/pi/of/of_v0.11.2_linuxarmv6l_release/apps/myApps/DigitalWeaving/src/ofApp.h
+ /home/pi/of/of_v0.11.2_linuxarmv6l_release/apps/myApps/DigitalWeaving/src/ofApp.h \
+ /home/pi/of/of_v0.11.2_linuxarmv6l_release/addons/ofxOsc/src/ofxOsc.h \
+ /home/pi/of/of_v0.11.2_linuxarmv6l_release/addons/ofxOsc/src/ofxOscArg.h \
+ /home/pi/of/of_v0.11.2_linuxarmv6l_release/addons/ofxOsc/src/ofxOscMessage.h \
+ /home/pi/of/of_v0.11.2_linuxarmv6l_release/addons/ofxOsc/src/ofxOscSender.h \
+ /home/pi/of/of_v0.11.2_linuxarmv6l_release/addons/ofxOsc/libs/oscpack/src/osc/OscTypes.h \
+ /home/pi/of/of_v0.11.2_linuxarmv6l_release/addons/ofxOsc/libs/oscpack/src/osc/OscOutboundPacketStream.h \
+ /home/pi/of/of_v0.11.2_linuxarmv6l_release/addons/ofxOsc/libs/oscpack/src/osc/OscTypes.h \
+ /home/pi/of/of_v0.11.2_linuxarmv6l_release/addons/ofxOsc/libs/oscpack/src/osc/OscException.h \
+ /home/pi/of/of_v0.11.2_linuxarmv6l_release/addons/ofxOsc/libs/oscpack/src/ip/UdpSocket.h \
+ /home/pi/of/of_v0.11.2_linuxarmv6l_release/addons/ofxOsc/libs/oscpack/src/ip/NetworkingUtils.h \
+ /home/pi/of/of_v0.11.2_linuxarmv6l_release/addons/ofxOsc/libs/oscpack/src/ip/IpEndpointName.h \
+ /home/pi/of/of_v0.11.2_linuxarmv6l_release/addons/ofxOsc/src/ofxOscBundle.h \
+ /home/pi/of/of_v0.11.2_linuxarmv6l_release/addons/ofxOsc/src/ofxOscReceiver.h \
+ /home/pi/of/of_v0.11.2_linuxarmv6l_release/addons/ofxOsc/libs/oscpack/src/osc/OscPacketListener.h \
+ /home/pi/of/of_v0.11.2_linuxarmv6l_release/addons/ofxOsc/libs/oscpack/src/osc/OscReceivedElements.h \
+ /home/pi/of/of_v0.11.2_linuxarmv6l_release/addons/ofxOsc/libs/oscpack/src/osc/../ip/PacketListener.h
 
 /home/pi/of/of_v0.11.2_linuxarmv6l_release/libs/openFrameworks/ofMain.h:
 
@@ -1808,3 +1824,35 @@ obj/linuxarmv6l/Release/src/main.o: \
 /home/pi/of/of_v0.11.2_linuxarmv6l_release/libs/openFrameworks/3d/ofEasyCam.h:
 
 /home/pi/of/of_v0.11.2_linuxarmv6l_release/apps/myApps/DigitalWeaving/src/ofApp.h:
+
+/home/pi/of/of_v0.11.2_linuxarmv6l_release/addons/ofxOsc/src/ofxOsc.h:
+
+/home/pi/of/of_v0.11.2_linuxarmv6l_release/addons/ofxOsc/src/ofxOscArg.h:
+
+/home/pi/of/of_v0.11.2_linuxarmv6l_release/addons/ofxOsc/src/ofxOscMessage.h:
+
+/home/pi/of/of_v0.11.2_linuxarmv6l_release/addons/ofxOsc/src/ofxOscSender.h:
+
+/home/pi/of/of_v0.11.2_linuxarmv6l_release/addons/ofxOsc/libs/oscpack/src/osc/OscTypes.h:
+
+/home/pi/of/of_v0.11.2_linuxarmv6l_release/addons/ofxOsc/libs/oscpack/src/osc/OscOutboundPacketStream.h:
+
+/home/pi/of/of_v0.11.2_linuxarmv6l_release/addons/ofxOsc/libs/oscpack/src/osc/OscTypes.h:
+
+/home/pi/of/of_v0.11.2_linuxarmv6l_release/addons/ofxOsc/libs/oscpack/src/osc/OscException.h:
+
+/home/pi/of/of_v0.11.2_linuxarmv6l_release/addons/ofxOsc/libs/oscpack/src/ip/UdpSocket.h:
+
+/home/pi/of/of_v0.11.2_linuxarmv6l_release/addons/ofxOsc/libs/oscpack/src/ip/NetworkingUtils.h:
+
+/home/pi/of/of_v0.11.2_linuxarmv6l_release/addons/ofxOsc/libs/oscpack/src/ip/IpEndpointName.h:
+
+/home/pi/of/of_v0.11.2_linuxarmv6l_release/addons/ofxOsc/src/ofxOscBundle.h:
+
+/home/pi/of/of_v0.11.2_linuxarmv6l_release/addons/ofxOsc/src/ofxOscReceiver.h:
+
+/home/pi/of/of_v0.11.2_linuxarmv6l_release/addons/ofxOsc/libs/oscpack/src/osc/OscPacketListener.h:
+
+/home/pi/of/of_v0.11.2_linuxarmv6l_release/addons/ofxOsc/libs/oscpack/src/osc/OscReceivedElements.h:
+
+/home/pi/of/of_v0.11.2_linuxarmv6l_release/addons/ofxOsc/libs/oscpack/src/osc/../ip/PacketListener.h:
