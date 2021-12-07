@@ -8,8 +8,8 @@ import matplotlib as plt
 from matplotlib import pyplot as plt
 from pathlib import Path
 import argparse
-
 import time
+from random import randint
 
 import serial
 from pythonosc import udp_client
@@ -28,13 +28,13 @@ client = udp_client.SimpleUDPClient("127.0.01", 12345)
 
 
 
-
-
 num_choices = 4
 num_questions = 8
 img_dir = "./test_Scantron/"
 img_index = 0
 webCam = False
+
+
 
 def load_image():
     #read image on disk to buffer
@@ -191,7 +191,22 @@ def process_frame(frame):
     image_edged, image_thresh = pre_processing(frame)
     question_contours = find_contours(image_edged)
     response = find_bubbled(question_contours, image_thresh)
+    return response_safeguard(response)
+    
+
+# Make sure it shows proper number of responses 
+def response_safeguard(response):
+
+    #check for too little recognized things
+    while len(response) < num_questions:
+        response.append(randint(0, num_choices))
+        
+    #check for too many recognized things
+    if len(response) > num_questions:
+        response = response[:num_questions]
+    
     return response
+
 
 # Keyboard Interrupt Handler
 def _keyboardInterrupt_handler(signum, frame):
