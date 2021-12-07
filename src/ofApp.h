@@ -36,7 +36,7 @@ std::vector<ofFbo> FrameBuffers;
  int FboWidth;
  int FboHeight;
 const int RowHeight=20;
-const int TargetScreenHeight=720;
+const int TargetScreenHeight=1280;
 
 const string OutPutPath= "./output/";
 int FBCount;
