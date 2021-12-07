@@ -9,6 +9,27 @@ from matplotlib import pyplot as plt
 from pathlib import Path
 import argparse
 
+import time
+
+import serial
+from pythonosc import udp_client
+
+ser =None
+NoArduino =True;
+try:
+    ser = serial.Serial('/dev/ttyUSB0')  # open serial port
+    print(ser.name)
+    NoArduino=False
+except:
+    print("Could not find Arduino for the serial button press. Just going to prrint out results.")
+    ser=None
+
+client = udp_client.SimpleUDPClient("127.0.01", 12345)
+
+
+
+
+
 num_choices = 4
 num_questions = 8
 img_dir = "./test_Scantron/"
@@ -175,7 +196,7 @@ def process_frame(frame):
 # Keyboard Interrupt Handler
 def _keyboardInterrupt_handler(signum, frame):
     print("  key board interrupt received...")
-
+    cap.release()
     try:
         sys.exit(0)
     except SystemExit:
@@ -190,6 +211,9 @@ if __name__ == "__main__":
         'img_index', type=int, help='the image index', nargs="?", default = 0)
     parser.add_argument(
         "-t", "--test", action="store_true", help="use disk image")
+    parser.add_argument(
+    "-n", "--nodisplay", action="store_true", help="don't display an output window")
+
     args = parser.parse_args()
 
     #-----In Test mode. Use disk image based on image index. ------#
@@ -221,14 +245,24 @@ if __name__ == "__main__":
 
 
         while(True):
+            
             if webCam:
                 ret, img = cap.read()
+                line=None
+                if not NoArduino:
+                    if  not ser==None and not ser.is_open:
+                        line = ser.readline()
+                if not NoArduino and not( (not line ==None )and 'p' in str(line)):
+                    continue;
                 response = process_frame(img)
-
                 display = "no detection"
                 if len(response) > 0:
                     display = ''.join(response)
+                    client.send_message("/pattern", response)
 
+                if args.nodisplay:
+                    print("NoArduino:",NoArduino,"Response:",response);
+                    continue;
                 cv2.imshow(display, img)
 
                 if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -237,4 +271,6 @@ if __name__ == "__main__":
             else:
                 break
 
-        cv2.destroyAllWindows()
+
+        if not args.nodisplay:
+            cv2.destroyAllWindows()
