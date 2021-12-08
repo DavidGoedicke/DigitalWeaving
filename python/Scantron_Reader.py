@@ -47,6 +47,7 @@ def load_image():
         #print(entry.name)
 
     image = cv2.imread(img_dir + img_file_name[img_index])
+    image = cv2.rotate(image, cv2.ROTATE_90_COUNTERCLOCKWISE)
     print(img_file_name[img_index])
 
     # gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
