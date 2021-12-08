@@ -34,6 +34,7 @@ img_dir = "./test_Scantron/"
 img_index = 0
 webCam = False
 
+sendBuffer=[]
 
 
 def load_image():
@@ -112,6 +113,8 @@ def find_contours(edged):
                 circle_x.append(x)
                 circle_y.append(y)
 
+    return questionCnts
+
 
 
 def sort_contours(cnts, method):
@@ -184,15 +187,20 @@ def find_bubbled(questionCnts, thresh):
 
             #print(bubbled)
             circled_answer.append(bubbled[1])
-
+    #print("the lenth of circled answers before fill is: " + str(len(circled_answer)))
+    client.send_message("/count", len(circled_answer))
     return circled_answer
     # cv2.drawContours(image3, [cnts[bubbled[1]]], -1, (255, 0, 0), 3)
     # plt.imshow(image3)
 
 def process_frame(frame):
+    global sendBuffer
     image_edged, image_thresh = pre_processing(frame)
     question_contours = find_contours(image_edged)
     response = find_bubbled(question_contours, image_thresh)
+    if(len(response)==8):
+        #print("UdatedGlobalBuffer")
+        sendBuffer=response.copy()
     return response_safeguard(response)
 
 # Make sure it shows proper number of responses
@@ -263,32 +271,28 @@ if __name__ == "__main__":
         while(True):
 
             if webCam:
+                #print("Starting loop")
                 ret, img = cap.read()
+                response = process_frame(img)
+
+                if not args.nodisplay:
+                    cv2.imshow("TESTING", img)
+
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    cap.release()
+                    break
+
                 line=None
                 if  (not ser==None )and( ser.is_open):
-                    line = ser.readline()
-                    print("Got a serial message")
+                    if(ser.in_waiting>0):
+                        line = ser.readline()
                 if line==None:
                     continue
                 if  not 'p' in str(line):
                     print("... and it was not p :((((((" , line)
                     continue;
-                print("... and it was p")
-                response = process_frame(img)
-                display = "no detection"
-                print(response)
-                if len(response) > 0:
-                    #display = ''.join(response)
-                    client.send_message("/pattern", response)
-
-                if args.nodisplay:
-                    print("NoArduino:",NoArduino,"Response:",response);
-                    continue;
-                cv2.imshow(display, img)
-
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    cap.release()
-                    break
+                if len(sendBuffer) == 8:
+                    client.send_message("/pattern", sendBuffer)
             else:
                 break
 
