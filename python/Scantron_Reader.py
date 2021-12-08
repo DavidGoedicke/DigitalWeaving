@@ -62,8 +62,9 @@ def load_image():
 def pre_processing(image):
     # grayscale, blur, edge detection
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-    edged = cv2.Canny(blurred, 75, 200)
+    gray_img_eqhist=cv2.equalizeHist(gray)
+    blurred = cv2.GaussianBlur(gray_img_eqhist, (5, 5), 0)
+    edged = cv2.Canny(blurred, 5, 60)
     thresh = cv2.threshold(edged, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
 
     return edged, thresh
@@ -88,27 +89,27 @@ def find_contours(edged):
 
         #---- making sure to avoid small unwanted contours ---
         if cv2.contourArea(c) > 200:
-            epsilon = 0.2 * cv2.arcLength(c, True)
-            approximations = cv2.approxPolyDP(c, epsilon, True)
-
+            epsilon = cv2.arcLength(c, True)
+            approximations = cv2.approxPolyDP(c, 0.04 * epsilon, True)
+            area = cv2.contourArea(c)
+            
             #--- selecting contours having more than 2 sides ---
-            if  7 < len(approximations) < 9:
+            if  4 <= len(approximations) and area > 400 and area < 50000:
                 (x, y, w, h) = cv2.boundingRect(c)
                 ar = w / float(h)
-
+                
                 # in order to label the contour as a question, region
                 # should be sufficiently wide, sufficiently tall, and
                 # have an aspect ratio approximately equal to 1
-                if w >= 20 and h >= 20 and ar >= 0.9 and ar <= 1.1:
+                if w >= 20 and h >= 20 and ar >= 0.85 and ar <= 1.15:
                     questionCnts.append(c)
-
+                
                     #(x,y),radius = cv2.minEnclosingCircle(c)
                     #x, y, w, h = cv2.boundingRect(c)
                     #print(x, y)
-
+                
                 circle_x.append(x)
                 circle_y.append(y)
-    return questionCnts
 
 
 
@@ -192,7 +193,7 @@ def process_frame(frame):
     question_contours = find_contours(image_edged)
     response = find_bubbled(question_contours, image_thresh)
     return response_safeguard(response)
-    
+
 
 # Make sure it shows proper number of responses 
 def response_safeguard(response):
