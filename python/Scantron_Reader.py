@@ -192,19 +192,19 @@ def process_frame(frame):
     question_contours = find_contours(image_edged)
     response = find_bubbled(question_contours, image_thresh)
     return response_safeguard(response)
-    
 
-# Make sure it shows proper number of responses 
+
+# Make sure it shows proper number of responses
 def response_safeguard(response):
 
     #check for too little recognized things
     while len(response) < num_questions:
-        response.append(randint(0, num_choices))
-        
+        response.append(randint(0, num_choices-1))
+
     #check for too many recognized things
     if len(response) > num_questions:
         response = response[:num_questions]
-    
+
     return response
 
 
@@ -260,19 +260,24 @@ if __name__ == "__main__":
 
 
         while(True):
-            
+
             if webCam:
                 ret, img = cap.read()
                 line=None
-                if not NoArduino:
-                    if  not ser==None and not ser.is_open:
-                        line = ser.readline()
-                if not NoArduino and not( (not line ==None )and 'p' in str(line)):
+                if  (not ser==None )and( ser.is_open):
+                    line = ser.readline()
+                    print("Got a serial message")
+                if line==None:
+                    continue
+                if  not 'p' in str(line):
+                    print("... and it was not p :((((((" , line)
                     continue;
+                print("... and it was p")
                 response = process_frame(img)
                 display = "no detection"
+                print(response)
                 if len(response) > 0:
-                    display = ''.join(response)
+                    #display = ''.join(response)
                     client.send_message("/pattern", response)
 
                 if args.nodisplay:
