@@ -182,10 +182,10 @@ ofEnableAlphaBlending();
   if(scrollDelta>0){
     if(ofGetFrameNum()%(RowHeight*2)>=RowHeight && scrollDelta<=FboHeight){
 
-      scrollDelta-=ScrollSpeed;
+      scrollDelta-=ScrollSpeed*ofGetLastFrameTime();
     }else if(scrollDelta>FboHeight){
 
-        scrollDelta-=ScrollSpeed;
+        scrollDelta-=ScrollSpeed*ofGetLastFrameTime();
     }
   }
   if(scrollDelta<0){

@@ -46,7 +46,7 @@ int ActiveMarkersfound;
 
 int ActiveFBO;
 
-const int ScrollSpeed=4;
+const int ScrollSpeed=65;
  unsigned int scrollDelta;
 
 

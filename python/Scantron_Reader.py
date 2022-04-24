@@ -288,11 +288,14 @@ if __name__ == "__main__":
                         line = ser.readline()
                 if line==None:
                     continue
+                #print("Got a message not sure if its p");
                 if  not 'p' in str(line):
                     print("... and it was not p :((((((" , line)
                     continue;
                 if len(sendBuffer) == 8:
                     client.send_message("/pattern", sendBuffer)
+                else:
+                    print("Was trying to send data but didnt detect anything yet :( !")
             else:
                 break
 
