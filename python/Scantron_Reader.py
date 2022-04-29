@@ -277,12 +277,14 @@ if __name__ == "__main__":
 
             if webCam:
                 #print("Starting loop")
-                ret, img = cap.read()
+                ret, imgUncropt = cap.read()
+                img = imgUncropt[:, -280:]
+
                 response = process_frame(img)
 
                 if not args.nodisplay:
-                    cv2.imshow("Camera View", cv2.resize(img, (960, 540))  )
-
+                    cv2.imshow("Camera View",cv2.flip(img, 1) )
+                   
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     cap.release()
                     break 
