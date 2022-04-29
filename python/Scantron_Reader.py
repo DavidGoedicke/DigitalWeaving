@@ -4,8 +4,9 @@ import numpy as np
 import argparse
 #import imutils
 import cv2
-import matplotlib as plt
-from matplotlib import pyplot as plt
+
+
+
 from pathlib import Path
 import argparse
 import time
@@ -15,13 +16,13 @@ import serial
 from pythonosc import udp_client
 
 ser =None
-NoArduino =True;
+NoArduino =True
 try:
     ser = serial.Serial('/dev/ttyUSB0')  # open serial port
     print(ser.name)
     NoArduino=False
 except:
-    print("Could not find Arduino for the serial button press. Just going to prrint out results.")
+    print("Could not find Arduino for the serial button press. Just going to print out results.")
     ser=None
 
 client = udp_client.SimpleUDPClient("127.0.01", 12345)
