@@ -47,7 +47,7 @@ int ActiveMarkersfound;
 int ActiveFBO;
 
 const int ScrollSpeed=65*4;
- unsigned int scrollDelta;
+ signed long scrollDelta;
 
 
  ofxOscReceiver receiver;

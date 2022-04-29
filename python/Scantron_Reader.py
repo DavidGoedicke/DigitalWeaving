@@ -281,7 +281,7 @@ if __name__ == "__main__":
                 response = process_frame(img)
 
                 if not args.nodisplay:
-                    cv2.imshow("TESTING", img)
+                    cv2.imshow("Camera View", cv2.resize(img, (960, 540))  )
 
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     cap.release()
@@ -292,7 +292,7 @@ if __name__ == "__main__":
                     if(ser.in_waiting>0):
                         line = ser.readline()
                         print(line)
-                if line==None:p
+                if line==None:
                     continue
                 #print("Got a message not sure if its p");
                 if  not 'p' in str(line):
