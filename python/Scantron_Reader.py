@@ -18,7 +18,7 @@ from pythonosc import udp_client
 ser =None
 NoArduino =True
 try:
-    ser = serial.Serial('/dev/ttyUSB0')  # open serial port
+    ser = serial.Serial('/dev/cu.usbserial-DN01DJDP')  # open serial port
     print(ser.name)
     NoArduino=False
 except:
@@ -31,7 +31,7 @@ client = udp_client.SimpleUDPClient("127.0.01", 12345)
 
 num_choices = 4
 num_questions = 8
-img_dir = "./test_Scantron/"
+img_dir = "./test_CHI-workshop/"
 img_index = 0
 webCam = False
 
@@ -70,7 +70,10 @@ def pre_processing(image):
     edged = cv2.Canny(blurred, 5, 60)
     thresh = cv2.threshold(edged, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
 
-    return edged, thresh
+    kernel = np.ones((3,3),np.uint8)
+    dilation = cv2.dilate(edged,kernel,iterations = 1)
+
+    return dilation, thresh
 
 
 def find_contours(edged):
@@ -111,8 +114,8 @@ def find_contours(edged):
                     #x, y, w, h = cv2.boundingRect(c)
                     #print(x, y)
 
-                circle_x.append(x)
-                circle_y.append(y)
+                    circle_x.append(x)
+                    circle_y.append(y)
 
     return questionCnts
 
@@ -200,7 +203,7 @@ def process_frame(frame):
     question_contours = find_contours(image_edged)
     response = find_bubbled(question_contours, image_thresh)
     if(len(response)==8):
-        #print("UdatedGlobalBuffer")
+        print("UpdatedGlobalBuffer")
         sendBuffer=response.copy()
     return response_safeguard(response)
 
@@ -263,6 +266,7 @@ if __name__ == "__main__":
             cap = cv2.VideoCapture(0)
             if cap is None or not cap.isOpened():
                raise("No camera")
+               print("No camera")
             webCam = True
         except:
             img_index = 0
@@ -281,19 +285,21 @@ if __name__ == "__main__":
 
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     cap.release()
-                    break
+                    break 
 
                 line=None
-                if  (not ser==None )and( ser.is_open):
+                if  (not ser==None ) and ( ser.is_open): 
                     if(ser.in_waiting>0):
                         line = ser.readline()
-                if line==None:
+                        print(line)
+                if line==None:p
                     continue
                 #print("Got a message not sure if its p");
                 if  not 'p' in str(line):
                     print("... and it was not p :((((((" , line)
                     continue;
                 if len(sendBuffer) == 8:
+                    print(str(sendBuffer))
                     client.send_message("/pattern", sendBuffer)
                 else:
                     print("Was trying to send data but didnt detect anything yet :( !")
