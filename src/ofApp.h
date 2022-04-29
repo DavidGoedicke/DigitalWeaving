@@ -14,7 +14,6 @@ class ofApp : public ofBaseApp{
 		void setup();
 		void update();
 		void draw();
-
 		void keyPressed(int key);
 		void keyReleased(int key);
 		void mouseMoved(int x, int y);
@@ -26,6 +25,7 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
+    void exit();
 
 		void MakeNextSection(int param[8]);
 	void	drawNextRow(int yPos,bool indentedLine,ofColor col);
@@ -55,12 +55,32 @@ const int ScrollSpeed=65;
  ofImage BackgroundImage;
  ofImage OverlayImage;
 bool KeyPressed;
-const ofColor red = ofColor(235,127,108);
-const ofColor green = ofColor(214,169,148);
-const ofColor blue = ofColor(250,191,133);
-const ofColor yellow = ofColor(214,86,97);
-const ofColor white = ofColor(200,200,200);
-const ofColor black = ofColor(50,50,50);
+    
+    
+    ofShader shaderBlurX;
+    ofShader shaderBlurY;
+    bool doShader;
+    const ofColor a = ofColor(101,88,80);
+    const ofColor b = ofColor(235,205,165);
+    const ofColor c = ofColor(62,71,34);
+    const ofColor d = ofColor(219-40,241-40,236-40);
+    
+   // const ofColor green = ofColor(214,169,148);
+    //const ofColor blue = ofColor(250,191,133);
+    //const ofColor yellow = ofColor(214,86,97);
+    const ofColor white = ofColor(200,200,200);
+   // const ofColor black = ofColor(50,50,50);
+    
+    
+    
+    
+    
+//const ofColor red = ofColor(235,127,108);
+//const ofColor green = ofColor(214,169,148);
+//const ofColor blue = ofColor(250,191,133);
+//const ofColor yellow = ofColor(214,86,97);
+//const ofColor white = ofColor(200,200,200);
+//const ofColor black = ofColor(50,50,50);
 
 
 //const ofColor red = ofColor(75,206,224);

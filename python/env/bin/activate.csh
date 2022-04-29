@@ -8,7 +8,7 @@ alias deactivate 'test $?_OLD_VIRTUAL_PATH != 0 && setenv PATH "$_OLD_VIRTUAL_PA
 # Unset irrelevant variables.
 deactivate nondestructive
 
-setenv VIRTUAL_ENV "/Users/dg/Downloads/of_v0.11.2_osx_release/apps/myApps/DigitalWeaving/bin/data/python/env"
+setenv VIRTUAL_ENV "/Users/dg/Downloads/of_v0.11.2_osx_release/apps/myApps/DigitalWeaving/python/env"
 
 set _OLD_VIRTUAL_PATH="$PATH"
 setenv PATH "$VIRTUAL_ENV/bin:$PATH"

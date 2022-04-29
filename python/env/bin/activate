@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/Users/dg/Downloads/of_v0.11.2_osx_release/apps/myApps/DigitalWeaving/bin/data/python/env"
+VIRTUAL_ENV="/Users/dg/Downloads/of_v0.11.2_osx_release/apps/myApps/DigitalWeaving/python/env"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

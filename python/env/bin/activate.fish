@@ -29,7 +29,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/Users/dg/Downloads/of_v0.11.2_osx_release/apps/myApps/DigitalWeaving/bin/data/python/env"
+set -gx VIRTUAL_ENV "/Users/dg/Downloads/of_v0.11.2_osx_release/apps/myApps/DigitalWeaving/python/env"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH
