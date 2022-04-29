@@ -11,7 +11,7 @@ void ofApp::setup(){
     
     
     FboWidth=BackgroundImage.getWidth();
-    FboHeight = (RowHeight*20);
+    FboHeight = (RowHeight*18); //(RowHeight*20);
     
     FBCount =  (int)  ((ceil((float)TargetScreenHeight/(float)FboHeight))+3);
     ActiveFBO=0;
@@ -107,8 +107,8 @@ void ofApp::MakeNextSection(int param[8]){
     
     ofClear(0,0,0,0);
     drawNextRow(yPos,false, white);
-    drawNextRow(yPos+=RowDif,true, white);
-    drawNextRow(yPos+=RowDif,false, white);//white);
+   // drawNextRow(yPos+=RowDif,true, white);
+   // drawNextRow(yPos+=RowDif,false, white);//white);
     //cout<<"Step A"<<endl;
     for(int i=0;i<8;i++){
         ofColor col;
@@ -133,8 +133,8 @@ void ofApp::MakeNextSection(int param[8]){
         }
         
         drawNextRow(yPos+=RowDif,true, col);
-        drawNextRow(yPos+=RowDif,false, col);   //white;
-        //    cout<<"in the loop"<<i<<endl;
+        drawNextRow(yPos+=RowDif,false, col);
+        
     }
     //cout<<"Step B"<<endl;;
     drawNextRow(yPos+=RowDif,true,white);
