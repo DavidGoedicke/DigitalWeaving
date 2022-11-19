@@ -9,7 +9,7 @@ This project is the coding slip scanner and digital simulation of the Communal L
 - If you never installed Xcode Command Line Tool, install Xcode Command Line Tool and reboot your device. 
 
 ## How to run the program:
-- navigate to `~/python/
+- navigate to `~/python/`
 - run `./install.sh`. This will install the Python dependencies needed.
 - run `./run.sh`. This will start the webcam process.
 - navigate to `/bin/` and run `DigitalWeavingDebug.app`. This should start the visual simulation of the loom. 
